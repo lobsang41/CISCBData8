@@ -1,0 +1,22 @@
+#! /usr/bin/env python
+
+import sys
+
+last_user, item_ratings = None, [] 
+user_count, user_sum = 0, 0
+
+for line in sys.stdin:
+
+	(user_item, rating) = line.strip().split("\t") 
+	user, item = user_item.split(',')
+	if last_user != user and last_user is not None: rating_string = ' '.join(item_ratings)
+
+	print "%s\t%s|%s|%s" % (last_user, user_count, user_sum, rating_string)
+	 
+	(user_count, user_sum, item_ratings) = (0, 0, []) last_user = user
+
+	item_ratings.append('%s,%s' % (item,rating)) user_count += 1
+
+	user_sum += int(rating) rating_string = ' '.join(item_ratings)
+
+	print "%s\t%s|%s|%s" % (last_user, user_count, user_sum, rating_string)
