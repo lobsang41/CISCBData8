@@ -2,8 +2,33 @@
 
 #pragma once
 
+#include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 #include "Spawner.generated.h"
+
+
+
+/** Yelp Base data */
+
+USTRUCT(blueprintType)
+struct FGameObjectTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+		/** Full Path of Blueprint */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
+		FString UserId;
+
+	/** Category of GamePlay Object */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
+		int32 Rating;
+
+	/** Scriptable Use Code */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
+		FString BusinessId;
+};
+
 
 UCLASS()
 class BIGDATAVR_API ASpawner : public AActor
@@ -31,5 +56,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GenerateData")
 		void GenerateObjectsAmount(int32 HowMany, int32 BreakCount, float offset);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "GenerateData")
+		void GenerateObjectsAmountWithTransform(int32 HowMany, int32 BreakCount, float offset, FTransform transform);
+
+	UFUNCTION(BlueprintCallable, Category = "GenerateData")
+		void GenerateSingleObjectWithTransform(float offset, FTransform transform);
+private:
 };

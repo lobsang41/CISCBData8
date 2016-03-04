@@ -2,62 +2,91 @@
 
 #include "BigDataVR.h"
 #include "Engine.h"
+#include "Spawner.h"
+#include "TestShape.h"
 #include "SpawnData.h"
+
 
 
 // Sets default values
 ASpawnData::ASpawnData()
 {
+
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+
 
 	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	RootComponent = SphereComponent;
 
+	MeshProperties.X = 1.0f;
+	MeshProperties.Y = 1.0f;
+	MeshProperties.Z = 1.0f;
 
-	UProceduralMeshComponent* mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
-	// setup sizes
-	float cubeSize = 10.f;
-	float cubeSpacing = 50.f;
+	static ConstructorHelpers::FObjectFinder<UDataTable>
+		FBig_Data_Yelp_BP(TEXT("DataTable'/Game/yelp.yelp'"));
+	DataLookupTable = FBig_Data_Yelp_BP.Object;
 
-	// find the material and add it to the mesh
-	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("Material'/Game/Materials/BaseMat.BaseMat'"));
-	//mesh->SetMaterial(0, Material.Object);
-
-
+}
 
 
-
-	TArray<FVector> vertices;
-
-	vertices.Add(FVector(0, -50, 0));
-	vertices.Add(FVector(0, 50, 0));
-	vertices.Add(FVector(0, 0, 50));
-
-	TArray<int32> Triangles;
-	Triangles.Add(0);
-	Triangles.Add(1);
-	Triangles.Add(2);
-
-	// Obtenemos los datos de la tabla
-	//UDataTable* DataLookupTable;
-	//static ConstructorHelpers::FObjectFinder<UDataTable>Big_Data_BP(TEXT("DataTable'/Game/SampleData.SampleData'"));
-	//DataLookupTable = Big_Data_BP.Object;
-	for (int32 i = 1; i < 5; i++)
-	{
-		TArray<FVector> vertices2;
-
-		vertices2.Add(FVector(0, -50 + cubeSpacing, 0));
-		vertices2.Add(FVector(0, 50 + cubeSpacing, 0));
-		vertices2.Add(FVector(0, 0, 50 + cubeSpacing));
+void ASpawnData::ReadCSV(float offset, FTransform transform)
+{
+	FRotator rotation = this->GetActorRotation();
+	FTransform LocalTransform;
 	
-		mesh->CreateMeshSection(i, vertices2, Triangles, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
-		cubeSpacing += 50.0f;
+	LocalTransform = transform;
+	FVector Position;
+	Position = LocalTransform.GetLocation();
+	FVector OriginalLocation = Position;
+	FVector OriginalMeshProperties = MeshProperties;
+
+	if (DataLookupTable)
+	{
+		static const FString ContextString(TEXT("GENERAL"));
+
+		uint32 RecordCount = DataLookupTable->GetTableData().Num();
+
+		for (uint32 i = 0; i < RecordCount; i++)
+		{
+			FString IndexString = FString::FromInt((int32)i);
+			FName IndexName = FName(*IndexString);
+
+			FBig_Data_Yelp* GOLookupRow = DataLookupTable->FindRow<FBig_Data_Yelp>(IndexName, ContextString);
+
+			// skip bad rows
+			if (!GOLookupRow)
+				continue;
+
+			// get the row data
+			FString UserID = GOLookupRow->UserId;
+			int32 Rat = GOLookupRow->Rating;
+			FString dId = GOLookupRow->BusinessId;
+
+			GEngine->AddOnScreenDebugMessage(GEngine->ScreenMessages.Num() + 1, 6.0f, FColor::Green, UserID);
+			// build the cube
+
+			//TestShape* Mesh = ATestShape
+			UWorld* const World = GetWorld();
+			if (World)
+			{
+
+				ATestShape* ts = World->SpawnActor<ATestShape>(ATestShape::StaticClass(), LocalTransform.GetLocation(), rotation);
+
+				MeshProperties.Z *= Rat;
+				ts->initCreation(MeshProperties);
+				ts->TextData->SetText(FText::FromString(UserID));
+
+				Position.X += offset;
+				LocalTransform.SetLocation(Position);
+				MeshProperties = OriginalMeshProperties;
+			}
+			
+		}
+
 	}
-
-
-	mesh->AttachTo(RootComponent);
-
 }
 
 // Called when the game starts or when spawned

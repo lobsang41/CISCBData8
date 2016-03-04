@@ -4,6 +4,7 @@
 #include "TestShape.h"
 
 
+
 // Sets default values
 ATestShape::ATestShape()
 {
@@ -12,82 +13,18 @@ ATestShape::ATestShape()
 
 	mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 
-	/*
-	// create the mesh component
-	UProceduralMeshComponent* mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	*/
 	// find the material and assign to the mesh
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("Material'/Game/BaseMaterial.BaseMaterial'"));
 	mesh->SetMaterial(0, Material.Object);
 
+
 	// set the mesh as the root component
 	RootComponent = mesh;
-	/*
-	// define the arrays
-	TArray<FVector> Vertices;
-	TArray<int32> Triangles;
-	TArray<FVector> Normals;
-	TArray<FVector2D> UV0;
-	TArray<FColor> VertexColors;
-	TArray<FProcMeshTangent> Tangents;
 
-	// fill all the arrays 
+	TextData = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text Data"));
 
-	Vertices.Add(FVector(0, -25, 0));
-	Vertices.Add(FVector(25, 50, 0));
-	Vertices.Add(FVector(25, 0, 50));
-
-	Vertices.Add(FVector(25, 50, 0));
-	Vertices.Add(FVector(50, -25, 0));
-	Vertices.Add(FVector(25, 0, 50));
-
-	Vertices.Add(FVector(0, -25, 0));
-	Vertices.Add(FVector(25, 0, 50));
-	Vertices.Add(FVector(50, -25, 0));
-
-
-
-	Triangles.Add(0);
-	Triangles.Add(1);
-	Triangles.Add(2);
-	Triangles.Add(3);
-	Triangles.Add(4);
-	Triangles.Add(5);
-	Triangles.Add(6);
-	Triangles.Add(7);
-	Triangles.Add(8);
-
-
-	UV0.Add(FVector2D(0, 0));
-	UV0.Add(FVector2D(0, 10));
-	UV0.Add(FVector2D(10, 10));
-	UV0.Add(FVector2D(0, 0));
-	UV0.Add(FVector2D(0, 10));
-	UV0.Add(FVector2D(10, 10));
-	UV0.Add(FVector2D(0, 0));
-	UV0.Add(FVector2D(0, 10));
-	UV0.Add(FVector2D(10, 10));
-
-
-
-
-	VertexColors.Add(FColor(100, 100, 100, 100));
-	VertexColors.Add(FColor(100, 100, 100, 100));
-	VertexColors.Add(FColor(20, 30, 100, 100));
-	VertexColors.Add(FColor(10, 75, 100, 50));
-	VertexColors.Add(FColor(20, 20, 60, 20));
-	VertexColors.Add(FColor(20, 30, 100, 100));
-	VertexColors.Add(FColor(10, 75, 100, 50));
-	VertexColors.Add(FColor(20, 20, 60, 20));
-	VertexColors.Add(FColor(20, 30, 100, 100));
-
-
-
-
-	// create the mesh section, 0 for the first section, false at the end to stop collision being added
-	mesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, false);
-
-	*/
+	TextData->AttachTo(RootComponent);
+	TextData->SetRelativeLocation(FVector(0.0f, 0.0f, -9.0f));
 	
 }
 
@@ -167,6 +104,11 @@ void ATestShape::initCreation(FVector MeshProperties)
 
 	// create the mesh section, 0 for the first section, false at the end to stop collision being added
 	mesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, false);
+
+}
+
+void ATestShape::CreateMeshCustomZ(FVector MeshProperties)
+{
 
 }
 

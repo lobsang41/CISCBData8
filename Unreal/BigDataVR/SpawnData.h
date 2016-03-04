@@ -47,6 +47,30 @@ public:
 
 
 
+
+USTRUCT(blueprintType)
+struct FBig_Data_Yelp : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FString DATE_TIME;
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+		FString UserId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+		int32 Rating;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+		FString BusinessId;
+
+};
+
+
+
+
 UCLASS()
 class BIGDATAVR_API ASpawnData : public AActor
 {
@@ -62,11 +86,19 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigData")
+		FVector MeshProperties;
+
+	UDataTable* DataLookupTable;
+
 
 	UFUNCTION(BlueprintCallable, Category = "GenerateData")
 	void Generate(float x, float y);
 
 	UFUNCTION(BlueprintCallable, Category = "GenerateData")
 	void GenerateTestMesh(int32 times);
+
+	UFUNCTION(BlueprintCallable, Category = "GenerateData")
+		void ReadCSV(float offset, FTransform transform);
 	
 };

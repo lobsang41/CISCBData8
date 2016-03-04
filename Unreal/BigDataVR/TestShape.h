@@ -4,7 +4,10 @@
 
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "Engine.h"
 #include "TestShape.generated.h"
+
+
 
 UCLASS()
 class BIGDATAVR_API ATestShape : public AActor
@@ -23,9 +26,14 @@ public:
 
 	UProceduralMeshComponent* mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, transient, Category = "BigData")
+		UTextRenderComponent * TextData;
 
 	UFUNCTION(BlueprintCallable, Category = "GenerateCustomMesh")
-	virtual	void initCreation(FVector MeshProperties);
+		virtual	void initCreation(FVector MeshProperties);
+
+	UFUNCTION(BlueprintCallable, Category = "GenerateCustomMesh")
+		virtual	void CreateMeshCustomZ(FVector MeshProperties);
 
 	UFUNCTION(BlueprintCallable, Category = "GenerateData")
 		void GenerateTestMesh();

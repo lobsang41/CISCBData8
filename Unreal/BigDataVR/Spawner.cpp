@@ -4,31 +4,6 @@
 #include "Spawner.h"
 #include "Engine.h"
 #include "TestShape.h"
-#include "Engine/DataTable.h"
-
-
-
-/** Yelp Base data */
-
-USTRUCT(blueprintType)
-struct FGameObjectTable : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-		/** Full Path of Blueprint */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
-		FString UserId;
-
-	/** Category of GamePlay Object */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
-		int32 Rating;
-
-	/** Scriptable Use Code */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BigDataS6L")
-		FString BusinessId;
-};
-
-
 
 
 // Sets default values
@@ -113,4 +88,67 @@ void ASpawner::GenerateObjectsAmount(int32 HowMany,int32 BreakCount, float offse
 
 	}
 }
+
+
+void ASpawner::GenerateObjectsAmountWithTransform(int32 HowMany, int32 BreakCount, float offset, FTransform transform)
+{
+
+	int32 temp = 0;
+	FVector location = this->GetActorLocation();
+	FRotator rotation = this->GetActorRotation();
+	
+	FTransform LocalTransform;
+
+	LocalTransform = transform;
+
+	FVector Position;
+	Position = LocalTransform.GetLocation();
+	FVector OriginalLocation = Position;
+
+	//TestShape* Mesh = ATestShape
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+
+		for (int i = 0; i < HowMany; i++)
+		{
+
+			ATestShape* ts = World->SpawnActor<ATestShape>(ATestShape::StaticClass(),LocalTransform.GetLocation(),rotation);
+			ts->initCreation(MeshProperties);
+			Position.X += offset;
+			//Position.Y += (offset/2);
+			LocalTransform.SetLocation(Position);
+
+			temp++;
+			if (temp == BreakCount) {
+				Position.X = OriginalLocation.X;
+				//location.Z += offset;
+				temp = 0;
+			}
+
+
+		}
+
+	}
+}
+
+void ASpawner::GenerateSingleObjectWithTransform(float offset, FTransform transform) 
+{
+
+	FRotator rotation = this->GetActorRotation();
+	FTransform LocalTransform;
+	LocalTransform = transform;
+
+
+	//TestShape* Mesh = ATestShape
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+			ATestShape* ts = World->SpawnActor<ATestShape>(ATestShape::StaticClass(), LocalTransform.GetLocation(), rotation);
+			ts->initCreation(MeshProperties);		
+
+	}
+}
+
+
 
